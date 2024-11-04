@@ -1,5 +1,6 @@
 <?php
-
+header('Content-Type: application/json');
+header('Accept: application/json');
 $superheroes = [
   [
       "id" => 1,
@@ -63,10 +64,16 @@ $superheroes = [
   ], 
 ];
 
-?>
+function generateSuperheroList(array $superheroes): string
+{
+    $html = "<ul>\n";
+    foreach ($superheroes as $superhero) {
+        $html .= "  <li>" . htmlspecialchars($superhero['alias']) . "</li>\n";
+    }
+    $html .= "</ul>";
+    return $html;
+}
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+$jsonSuperheroes = json_encode(generateSuperheroList($superheroes));
+echo $jsonSuperheroes;
+?> 
