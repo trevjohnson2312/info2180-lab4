@@ -1,4 +1,7 @@
 <?php
+header('Content-Type: application/json');
+header('Accept: application/json');
+header("Access-Control-Allow-Origin: *");
 
 $superheroes = [
   [
@@ -63,10 +66,34 @@ $superheroes = [
   ], 
 ];
 
-?>
+if (!isset($_GET['query']) || trim($_GET['query']) === '') {
+    // If the query is empty, return a list of all superhero aliases
+    $aliases = array_map(function($hero) {
+        return $hero['alias'];
+    }, $superheroes);
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+    echo "<h2>Superhero List</h2><ul>";
+    foreach ($aliases as $alias) {
+        echo "<li>$alias</li>";
+    }
+    echo "</ul>";
+} else {
+    // Search for a specific superhero based on the provided query
+    $searchTerm = strtolower($_GET['query']);
+    $found = false;
+
+    foreach ($superheroes as $hero) {
+        if (stripos($hero['name'], $searchTerm) !== false || stripos($hero['alias'], $searchTerm) !== false) {
+            echo "<h2>{$hero['alias']}</h2>";
+            echo "<h3>Real Name: {$hero['name']}</h3>";
+            echo "<p>{$hero['biography']}</p>";
+            $found = true;
+            break;
+        }
+    }
+
+    if (!$found) {
+        echo "Superhero not found.";
+    }
+}
+?> 
